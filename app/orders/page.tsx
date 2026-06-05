@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import OrdersTable from "@/components/orders-table"
-import { getOrdersFromDb } from "@/app/actions";
+// import removed: using API fetch
 import { Order } from "@/lib/types"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -15,8 +15,18 @@ export default function OrdersPage() {
 
   useEffect(() => {
     (async () => {
-      const data = await getOrdersFromDb();
-      setOrders(data);
+      try {
+        const res = await fetch('/api/orders');
+        if (!res.ok) {
+          const text = await res.text();
+          console.error('Fetch error status:', res.status, 'body:', text);
+          throw new Error('Failed to fetch orders');
+        }
+        const data: Order[] = await res.json();
+        setOrders(data);
+      } catch (e) {
+        console.error('Error fetching orders:', e);
+      }
     })();
   }, []);
 

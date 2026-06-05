@@ -116,7 +116,7 @@ export default function OrderForm() {
           {success && (
             <Alert variant="default" className="mb-4">
               <AlertTitle>Success</AlertTitle>
-              <AlertDescription>Order saved locally.</AlertDescription>
+              <AlertDescription>Order saved.</AlertDescription>
             </Alert>
           )}
           {/* Drink Buttons */}

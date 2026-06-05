@@ -48,15 +48,25 @@ export async function GET() {
     const client = await pool.connect();
     try {
       const { rows } = await client.query(`SELECT * FROM orders ORDER BY created_at DESC`);
-      const orders: Order[] = rows.map((r) => ({
-        id: r.id,
-        items: JSON.parse(r.items),
-        totalItems: Number(r.total_items),
-        totalAmount: Number(r.total_amount),
-        paymentMethod: r.payment_method,
-        otherPaymentDescription: r.other_payment_description,
-        createdAt: r.created_at,
-      }));
+      console.log('GET /api/orders rows count:', rows.length);
+      const orders: Order[] = rows.map((r) => {
+          let items: Order['items'];
+          try {
+            items = JSON.parse(r.items);
+          } catch (e) {
+            console.error('Failed to parse items for order', r.id, e);
+            items = [];
+          }
+          return {
+            id: r.id,
+            items,
+            totalItems: Number(r.total_items),
+            totalAmount: Number(r.total_amount),
+            paymentMethod: r.payment_method,
+            otherPaymentDescription: r.other_payment_description,
+            createdAt: r.created_at,
+          };
+        });
       return NextResponse.json(orders);
     } finally {
       client.release();
