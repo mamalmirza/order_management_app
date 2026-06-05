@@ -2,7 +2,7 @@
 "use server";
 
 import { pool } from "@/lib/db";
-import { Order } from "@/lib/types";
+import { Order, PaymentMethod } from "@/lib/types";
 
 export async function saveOrderToDb(order: Order) {
   const client = await pool.connect();
@@ -53,16 +53,34 @@ export async function getOrdersFromDb(): Promise<Order[]> {
         other_payment_description: string | null;
         created_at: string;
       }>(`SELECT * FROM orders ORDER BY created_at DESC`);
-      const rows = result.rows;
-      return rows.map((r) => ({
-        id: r.id,
-        items: JSON.parse(r.items),
-        totalItems: Number(r.total_items),
-        totalAmount: Number(r.total_amount),
-        paymentMethod: r.payment_method,
-        otherPaymentDescription: r.other_payment_description,
-        createdAt: r.created_at,
-      }));
+      const rows = result.rows as Array<{
+        id: string;
+        items: string;
+        total_items: number;
+        total_amount: number;
+        payment_method: string;
+        other_payment_description: string | null;
+        created_at: string;
+      }>;
+      const orders: Order[] = rows.map((r) => {
+        let items: Order['items'];
+        try {
+          items = JSON.parse(r.items);
+        } catch (e) {
+          console.error('Failed to parse items for order', r.id, e);
+          items = [];
+        }
+        return {
+          id: r.id,
+          items,
+          totalItems: Number(r.total_items),
+          totalAmount: Number(r.total_amount),
+          paymentMethod: r.payment_method as PaymentMethod,
+          otherPaymentDescription: r.other_payment_description ?? undefined,
+          createdAt: r.created_at,
+        };
+      });
+      return orders;
   } catch (err: any) {
     // If the orders table does not exist, create it and return empty list
     if (err.code === '42P01') {

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
-import { Order } from '@/lib/types';
+import { Order, PaymentMethod } from '@/lib/types';
 
 // POST /api/orders
 export async function POST(req: Request) {
@@ -79,8 +79,8 @@ export async function GET() {
           items,
           totalItems: Number(r.total_items),
           totalAmount: Number(r.total_amount),
-          paymentMethod: r.payment_method,
-          otherPaymentDescription: r.other_payment_description,
+          paymentMethod: r.payment_method as PaymentMethod,
+          otherPaymentDescription: r.other_payment_description ?? undefined,
           createdAt: r.created_at,
         };
       });
