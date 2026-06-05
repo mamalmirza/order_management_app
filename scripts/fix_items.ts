@@ -1,5 +1,5 @@
 // scripts/fix_items.ts
-import { pool } from "@/lib/db";
+const { pool } = require('../lib/db');
 
 async function fix() {
   const client = await pool.connect();
