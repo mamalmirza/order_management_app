@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import OrdersTable from "@/components/orders-table"
-import { getOrders, clearOrders } from "@/lib/local-orders"
+import { getOrders } from "@/lib/local-orders"
 import { Order } from "@/lib/types"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -17,10 +17,7 @@ export default function OrdersPage() {
     setOrders(getOrders())
   }, [])
 
-  const handleClear = () => {
-    clearOrders()
-    setOrders([])
-  }
+  // Clear local orders functionality removed (no longer needed)
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 dark:bg-black p-4">
@@ -39,7 +36,7 @@ export default function OrdersPage() {
           )}
           <div className="flex justify-between mt-4">
             <Button variant="ghost" onClick={() => router.push('/')}>Back to Order Form</Button>
-<Button variant="destructive" className="min-h-14 text-base font-bold" onClick={handleClear}>Clear Local Orders</Button>
+          {/* Clear Local Orders button removed – functionality no longer needed */}
           </div>
         </CardContent>
       </Card>
