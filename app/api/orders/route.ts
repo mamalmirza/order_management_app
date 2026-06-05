@@ -47,26 +47,43 @@ export async function GET() {
   try {
     const client = await pool.connect();
     try {
-      const { rows } = await client.query(`SELECT * FROM orders ORDER BY created_at DESC`);
+      const result = await client.query<{
+        id: string;
+        items: string;
+        total_items: number;
+        total_amount: number;
+        payment_method: string;
+        other_payment_description: string | null;
+        created_at: string;
+      }>(`SELECT * FROM orders ORDER BY created_at DESC`);
+      const rows = result.rows;
       console.log('GET /api/orders rows count:', rows.length);
-      const orders: Order[] = rows.map((r) => {
-          let items: Order['items'];
-          try {
-            items = JSON.parse(r.items);
-          } catch (e) {
-            console.error('Failed to parse items for order', r.id, e);
-            items = [];
-          }
-          return {
-            id: r.id,
-            items,
-            totalItems: Number(r.total_items),
-            totalAmount: Number(r.total_amount),
-            paymentMethod: r.payment_method,
-            otherPaymentDescription: r.other_payment_description,
-            createdAt: r.created_at,
-          };
-        });
+      const orders: Order[] = rows.map((r: {
+        id: string;
+        items: string;
+        total_items: number;
+        total_amount: number;
+        payment_method: string;
+        other_payment_description: string | null;
+        created_at: string;
+      }) => {
+        let items: Order['items'];
+        try {
+          items = JSON.parse(r.items);
+        } catch (e) {
+          console.error('Failed to parse items for order', r.id, e);
+          items = [];
+        }
+        return {
+          id: r.id,
+          items,
+          totalItems: Number(r.total_items),
+          totalAmount: Number(r.total_amount),
+          paymentMethod: r.payment_method,
+          otherPaymentDescription: r.other_payment_description,
+          createdAt: r.created_at,
+        };
+      });
       return NextResponse.json(orders);
     } finally {
       client.release();
