@@ -11,7 +11,8 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 
 import { DRINK_OPTIONS } from "@/lib/constants"
 import { DrinkItem, Order, PaymentMethod } from "@/lib/types"
-import { saveOrder } from "@/lib/local-orders"
+import { saveOrderToDb } from "@/app/actions"
+
 
 export default function OrderForm() {
   // Current items in the order
@@ -70,13 +71,13 @@ export default function OrderForm() {
     return null
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const err = validate()
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const err = validate();
     if (err) {
-      setError(err)
-      setSuccess(false)
-      return
+      setError(err);
+      setSuccess(false);
+      return;
     }
     const order: Order = {
       id: crypto.randomUUID(),
@@ -86,11 +87,16 @@ export default function OrderForm() {
       paymentMethod,
       otherPaymentDescription: paymentMethod === "other" ? otherDesc : undefined,
       createdAt: new Date().toISOString(),
+    };
+    const result = await saveOrderToDb(order);
+    if (!result.success) {
+      setError(result.error ?? 'Failed to save order');
+      setSuccess(false);
+    } else {
+      setSuccess(true);
+      setError(null);
+      resetOrder();
     }
-    saveOrder(order)
-    setSuccess(true)
-    setError(null)
-    resetOrder()
   }
 
   return (

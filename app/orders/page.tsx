@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import OrdersTable from "@/components/orders-table"
-import { getOrders } from "@/lib/local-orders"
+import { getOrdersFromDb } from "@/app/actions";
 import { Order } from "@/lib/types"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -14,8 +14,11 @@ export default function OrdersPage() {
   const router = useRouter()
 
   useEffect(() => {
-    setOrders(getOrders())
-  }, [])
+    (async () => {
+      const data = await getOrdersFromDb();
+      setOrders(data);
+    })();
+  }, []);
 
   // Clear local orders functionality removed (no longer needed)
 
