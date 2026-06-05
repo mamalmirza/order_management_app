@@ -13,6 +13,6 @@ export function saveOrder(order: Order) {
   localStorage.setItem(LOCAL_STORAGE_ORDERS_KEY, JSON.stringify(orders));
 }
 
-export function clearOrders() {
-  localStorage.removeItem(LOCAL_STORAGE_ORDERS_KEY);
-}
+// export function clearOrders() {
+//   localStorage.removeItem(LOCAL_STORAGE_ORDERS_KEY);
+// }
