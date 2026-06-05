@@ -44,16 +44,25 @@ export async function saveOrderToDb(order: Order) {
 export async function getOrdersFromDb(): Promise<Order[]> {
   const client = await pool.connect();
   try {
-    const { rows } = await client.query(`SELECT * FROM orders ORDER BY created_at DESC`);
-    return rows.map((r) => ({
-      id: r.id,
-      items: JSON.parse(r.items),
-      totalItems: Number(r.total_items),
-      totalAmount: Number(r.total_amount),
-      paymentMethod: r.payment_method,
-      otherPaymentDescription: r.other_payment_description,
-      createdAt: r.created_at,
-    }));
+    const result = await client.query<{
+        id: string;
+        items: string;
+        total_items: number;
+        total_amount: number;
+        payment_method: string;
+        other_payment_description: string | null;
+        created_at: string;
+      }>(`SELECT * FROM orders ORDER BY created_at DESC`);
+      const rows = result.rows;
+      return rows.map((r) => ({
+        id: r.id,
+        items: JSON.parse(r.items),
+        totalItems: Number(r.total_items),
+        totalAmount: Number(r.total_amount),
+        paymentMethod: r.payment_method,
+        otherPaymentDescription: r.other_payment_description,
+        createdAt: r.created_at,
+      }));
   } catch (err: any) {
     // If the orders table does not exist, create it and return empty list
     if (err.code === '42P01') {

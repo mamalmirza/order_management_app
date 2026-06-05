@@ -11,7 +11,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 
 import { DRINK_OPTIONS } from "@/lib/constants"
 import { DrinkItem, Order, PaymentMethod } from "@/lib/types"
-import { saveOrderToDb } from "@/app/actions"
+
 
 
 export default function OrderForm() {
@@ -88,15 +88,20 @@ export default function OrderForm() {
       otherPaymentDescription: paymentMethod === "other" ? otherDesc : undefined,
       createdAt: new Date().toISOString(),
     };
-    const result = await saveOrderToDb(order);
-    if (!result.success) {
-      setError(result.error ?? 'Failed to save order');
-      setSuccess(false);
-    } else {
-      setSuccess(true);
-      setError(null);
-      resetOrder();
-    }
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(order),
+      });
+      const result = await res.json();
+      if (!result.success) {
+        setError(result.error ?? 'Failed to save order');
+        setSuccess(false);
+      } else {
+        setSuccess(true);
+        setError(null);
+        resetOrder();
+      }
   }
 
   return (
