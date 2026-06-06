@@ -130,7 +130,6 @@ export default function OrderForm() {
                 key={opt.name}
                 className={`min-h-20 w-full py-3 text-lg ${opt.color} text-gray-800 z-10 pointer-events-auto cursor-pointer touch-manipulation select-none active:scale-[0.98]`}
                 onClick={() => addDrink(opt.name, opt.price)}
-                onTouchStart={() => addDrink(opt.name, opt.price)}
               >
                 {opt.name} - ${opt.price}
               </Button>
@@ -149,7 +148,6 @@ export default function OrderForm() {
                       className="min-h-12 w-12 text-base"
                       variant="outline"
                       onClick={() => changeQuantity(i.drinkName, -1)}
-                      onTouchStart={() => changeQuantity(i.drinkName, -1)}
                     >-</Button>
                     <span className="text-lg font-medium">{i.quantity}</span>
                     <Button
@@ -157,7 +155,6 @@ export default function OrderForm() {
                       className="min-h-12 w-12 text-base"
                       variant="outline"
                       onClick={() => changeQuantity(i.drinkName, 1)}
-                      onTouchStart={() => changeQuantity(i.drinkName, 1)}
                     >+</Button>
                   </div>
                   <span className="text-lg font-medium">${i.quantity * i.unitPrice}</span>
@@ -165,7 +162,6 @@ export default function OrderForm() {
                     type="button"
                     variant="ghost"
                     onClick={() => removeItem(i.drinkName)}
-                    onTouchStart={() => removeItem(i.drinkName)}
                   >✕</Button>
                 </div>
               ))}
