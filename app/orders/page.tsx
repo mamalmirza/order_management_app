@@ -31,6 +31,11 @@ export default function OrdersPage() {
   }, []);
 
   // Clear local orders functionality removed (no longer needed)
+  // Compute summary totals
+  const totalItems = orders.reduce((sum, o) => sum + (o.totalItems ?? 0), 0);
+  const totalCard = orders.reduce((sum, o) => sum + (o.paymentMethod === 'card' ? (o.totalItems ?? 0) : 0), 0);
+  const totalCash = orders.reduce((sum, o) => sum + (o.paymentMethod === 'cash' ? (o.totalItems ?? 0) : 0), 0);
+  const totalOther = orders.reduce((sum, o) => sum + (o.paymentMethod === 'other' ? (o.totalItems ?? 0) : 0), 0);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 dark:bg-black p-4">
@@ -45,7 +50,20 @@ export default function OrdersPage() {
               <AlertDescription>No drink orders have been saved yet.</AlertDescription>
             </Alert>
           ) : (
-            <OrdersTable orders={orders} />
+            <>
+              {/* Summary Report */}
+              <div className="mt-6 space-y-2">
+                <h3 className="text-lg font-semibold">Order Summary</h3>
+                <p>Total Items: {totalItems}</p>
+                <p>Card Payments Items: {totalCard}</p>
+                <p>Cash Payments Items: {totalCash}</p>
+                <p>Other Payments Items: {totalOther}</p>
+              </div>
+              <div className="flex justify-between mt-4">
+                <Button variant="ghost" onClick={() => router.push('/')}>Back to Order Form</Button>
+              </div>
+              <OrdersTable orders={orders} />
+            </>
           )}
           <div className="flex justify-between mt-4">
             <Button variant="ghost" onClick={() => router.push('/')}>Back to Order Form</Button>
