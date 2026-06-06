@@ -21,7 +21,8 @@ export default function OrderForm() {
   const [otherDesc, setOtherDesc] = useState("")
 
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const [success, setSuccess] = useState(false);
+  const [showModal, setShowModal] = useState(false)
   const router = useRouter()
 
   const addDrink = (drinkName: string, unitPrice: number) => {
@@ -99,12 +100,14 @@ export default function OrderForm() {
         setSuccess(false);
       } else {
         setSuccess(true);
+          setShowModal(true);
         setError(null);
         resetOrder();
       }
   }
 
   return (
+    <>
     <Card className="w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle>Submit Drink Order</CardTitle>
@@ -118,12 +121,7 @@ export default function OrderForm() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-          {success && (
-            <Alert variant="default" className="mb-4">
-              <AlertTitle>Success</AlertTitle>
-              <AlertDescription>Order saved.</AlertDescription>
-            </Alert>
-          )}
+          
           {/* Drink Buttons */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 mb-4 relative">
             {DRINK_OPTIONS.map(opt => (
@@ -225,5 +223,15 @@ export default function OrderForm() {
         </form>
       </CardContent>
     </Card>
+    {showModal && (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-10 backdrop-blur-sm z-50">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full">
+          <h2 className="text-xl font-bold mb-4">Success</h2>
+          <p className="mb-4">Your order has been saved.</p>
+          <Button onClick={() => setShowModal(false)}>Close</Button>
+        </div>
+      </div>
+    )}
+    </>
   )
 }
