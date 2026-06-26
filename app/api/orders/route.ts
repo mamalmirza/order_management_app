@@ -68,11 +68,16 @@ export async function GET() {
         created_at: string;
       }) => {
         let items: Order['items'];
-        try {
-          items = JSON.parse(r.items);
-        } catch (e) {
-          console.error('Failed to parse items for order', r.id, e);
-          items = [];
+        if (typeof r.items === 'string') {
+          try {
+            items = JSON.parse(r.items);
+          } catch (e) {
+            console.error('Failed to parse items for order', r.id, e);
+            items = [];
+          }
+        } else {
+          // Already stored as JSONB object
+          items = r.items as any;
         }
         return {
           id: r.id,
